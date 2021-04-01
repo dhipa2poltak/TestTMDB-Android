@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <variable
+            name="viewModel"
+            type="com.dpfht.testtmdb.activity.MovieByGenreViewModel" />
+
+        <variable
+            name="position"
+            type="java.lang.Integer" />
+    </data>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="10dp"
+        android:onClick="@{() -> viewModel.onClickCell(viewModel.movies.get(position))}">
+
+        <TextView
+            android:id="@+id/tvTitleMovie"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{viewModel.movies.get(position).title}"/>
+
+    </LinearLayout>
+</layout>

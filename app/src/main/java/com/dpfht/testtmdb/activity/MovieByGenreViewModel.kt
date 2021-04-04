@@ -38,7 +38,7 @@ class MovieByGenreViewModel: BaseViewModel() {
                     if (moviesByGenreResponse?.results != null && moviesByGenreResponse.results!!.isNotEmpty()) {
                         for (movie in moviesByGenreResponse.results!!) {
                             movies.add(movie)
-                            movieData.postValue(movie)
+                            movieData.value = movie
                         }
                         //movieData.postValue(movies)
 

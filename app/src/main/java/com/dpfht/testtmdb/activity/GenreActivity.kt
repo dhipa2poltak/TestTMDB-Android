@@ -34,12 +34,15 @@ class GenreActivity : BaseActivity() {
         })
 
         viewModel.movieByGenreActivity.observe(this, Observer { value ->
-            val itn = Intent(this, value.first)
-            if (value.second != null) {
-                itn.putExtra(MovieByGenreActivity.KEY_EXTRA_GENRE_ID, value.second?.id)
-                itn.putExtra(MovieByGenreActivity.KEY_EXTRA_GENRE_NAME, value.second?.name)
+            if (value != null) {
+                val itn = Intent(this, value.first)
+                if (value.second != null) {
+                    itn.putExtra(MovieByGenreActivity.KEY_EXTRA_GENRE_ID, value.second?.id)
+                    itn.putExtra(MovieByGenreActivity.KEY_EXTRA_GENRE_NAME, value.second?.name)
+                }
+                startActivity(itn)
+                viewModel.movieByGenreActivity.value = null
             }
-            startActivity(itn)
         })
 
         viewModel.isShowDialogLoading.observe(this, Observer { value ->

@@ -36,7 +36,7 @@ class MovieReviewViewModel: BaseViewModel() {
                     if (reviewResponse?.results != null && reviewResponse.results!!.isNotEmpty()) {
                         for (review in reviewResponse.results!!) {
                             reviews.add(review)
-                            reviewData.postValue(review)
+                            reviewData.value = review
                         }
 
                         this@MovieReviewViewModel.page = page

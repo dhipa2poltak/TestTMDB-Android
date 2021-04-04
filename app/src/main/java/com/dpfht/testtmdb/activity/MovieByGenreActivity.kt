@@ -53,7 +53,6 @@ class MovieByGenreActivity : BaseActivity() {
 
         viewModel.movieData.observe(this, Observer {
             adapter.notifyItemInserted(viewModel.movies.size - 1)
-            //adapter.notifyDataSetChanged()
         })
 
         viewModel.isShowDialogLoading.observe(this, Observer { value ->
@@ -67,11 +66,15 @@ class MovieByGenreActivity : BaseActivity() {
         })
 
         viewModel.movieDetailActivity.observe(this, Observer { value ->
-            val itn = Intent(this, value.first)
-            if (value.second != null) {
-                itn.putExtra(MovieDetailActivity.KEY_EXTRA_MOVIE_ID, value.second?.id)
+            //Toast.makeText(this@MovieByGenreActivity, "size: ${viewModel.movies.size}", Toast.LENGTH_SHORT).show()
+            if (value != null) {
+                val itn = Intent(this, value.first)
+                if (value.second != null) {
+                    itn.putExtra(MovieDetailActivity.KEY_EXTRA_MOVIE_ID, value.second?.id)
+                }
+                startActivity(itn)
+                viewModel.movieDetailActivity.value = null
             }
-            startActivity(itn)
         })
 
         viewModel.toastMessage.observe(this, Observer { value ->
@@ -88,7 +91,7 @@ class MovieByGenreActivity : BaseActivity() {
             }
 
             val genreId = intent.getIntExtra(KEY_EXTRA_GENRE_ID, -1)
-            if (genreId != -1) {
+            if (genreId != -1 && viewModel.movies.size == 0) {
                 viewModel.genreId = genreId
                 viewModel.doGetMoviesByGenre(genreId.toString(), viewModel.page)
             }

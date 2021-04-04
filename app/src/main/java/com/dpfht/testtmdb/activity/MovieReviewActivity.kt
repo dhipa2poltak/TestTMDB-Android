@@ -51,7 +51,7 @@ class MovieReviewActivity : BaseActivity() {
         })
 
         viewModel.reviewData.observe(this, Observer {
-            adapter.notifyDataSetChanged()
+            adapter.notifyItemInserted(viewModel.reviews.size - 1)
         })
 
         viewModel.toastMessage.observe(this, Observer { value ->
@@ -78,7 +78,7 @@ class MovieReviewActivity : BaseActivity() {
             }
 
             val movieId = intent.getIntExtra(KEY_EXTRA_MOVIE_ID, -1)
-            if (movieId != -1) {
+            if (movieId != -1 && viewModel.reviews.size == 0) {
                 viewModel.movieId = movieId
                 viewModel.doGetMovieReviews(movieId, viewModel.page)
             }

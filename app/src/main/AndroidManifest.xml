@@ -13,7 +13,6 @@
         android:supportsRtl="true"
         tools:ignore="AllowBackup">
         <activity android:name=".MainActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,19 +21,15 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.GenreActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
         <activity android:name=".activity.MovieByGenreActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
         <activity android:name=".activity.MovieDetailActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
         <activity android:name=".activity.MovieReviewActivity"
-            android:screenOrientation="portrait"
             android:theme="@style/AppTheme"/>
         <activity android:name=".activity.MovieTrailerActivity"
-            android:screenOrientation="portrait"
+            android:screenOrientation="landscape"
             android:theme="@style/FullscreenTheme"/>
     </application>
 

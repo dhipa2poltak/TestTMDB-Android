@@ -3,16 +3,15 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.dpfht.testtmdb.R
+import com.dpfht.testtmdb.TheApplication
 import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.di.moviebygenreactivity.DaggerMovieByGenreActivityComponent
+import com.dpfht.testtmdb.di.moviebygenreactivity.MovieByGenreActivityModule
 import kotlinx.android.synthetic.main.activity_movie_by_genre.*
+import javax.inject.Inject
 
 class MovieByGenreActivity : BaseActivity() {
 
@@ -21,22 +20,27 @@ class MovieByGenreActivity : BaseActivity() {
         const val KEY_EXTRA_GENRE_NAME = "keyExtraGenreName"
     }
 
+    @Inject
     lateinit var viewModel: MovieByGenreViewModel
+
+    @Inject
     lateinit var adapter: MovieByGenreAdapter
+
+    @Inject
+    lateinit var binding: ActivityMovieByGenreBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieByGenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = MovieByGenreAdapter(viewModel)
+        val movieByGenreActivityComponent = DaggerMovieByGenreActivityComponent
+            .builder()
+            .movieByGenreActivityModule(MovieByGenreActivityModule(this))
+            .applicationComponent(TheApplication.get(this).applicationComponent)
+            .build()
 
-        val binding = DataBindingUtil.setContentView<ActivityMovieByGenreBinding>(this, R.layout.activity_movie_by_genre)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        movieByGenreActivityComponent.inject(this)
 
         rvMovieByGenre.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -80,6 +84,7 @@ class MovieByGenreActivity : BaseActivity() {
         viewModel.toastMessage.observe(this, Observer { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieByGenreActivity, value, Toast.LENGTH_SHORT).show()
+                viewModel.toastMessage.value = null
             }
         })
 
@@ -96,6 +101,8 @@ class MovieByGenreActivity : BaseActivity() {
                 viewModel.doGetMoviesByGenre(genreId.toString(), viewModel.page)
             }
         }
+
+        //Toast.makeText(this, "size: ${viewModel.movies.size}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {

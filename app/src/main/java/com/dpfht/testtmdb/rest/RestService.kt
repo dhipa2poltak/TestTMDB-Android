@@ -2,7 +2,6 @@ package com.dpfht.testtmdb.rest
 
 import com.dpfht.testtmdb.model.*
 import io.reactivex.Observable
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -35,5 +34,5 @@ interface RestService {
     fun getMovieTrailers(
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String,
-        @Query("language") language: String = "en-US"): Call<TrailerResponse?>?
+        @Query("language") language: String = "en-US"): Observable<Response<TrailerResponse?>>?
 }

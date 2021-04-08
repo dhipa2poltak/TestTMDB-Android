@@ -12,20 +12,20 @@ import retrofit2.Response
 
 class MovieDetailViewModel: BaseViewModel() {
 
-    var restApi: RestService? = null
+    lateinit var restApi: RestService
 
     var id = -1
 
-    var title = ObservableField<String>()
-    var overview = ObservableField<String>()
-    var posterPath = ObservableField<String>()
+    val title = ObservableField<String>()
+    val overview = ObservableField<String>()
+    val posterPath = ObservableField<String>()
 
     val myCompositeDisposable = CompositeDisposable()
 
     fun doGetMovieDetail(movieId: Int) {
         isShowDialogLoading.postValue(true)
 
-        val disposable = restApi?.getMovieDetail(movieId, Config.API_KEY)
+        val disposable = restApi.getMovieDetail(movieId, Config.API_KEY)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object : CallbackWrapper<Response<MovieDetailsResponse?>, MovieDetailsResponse?>(this) {

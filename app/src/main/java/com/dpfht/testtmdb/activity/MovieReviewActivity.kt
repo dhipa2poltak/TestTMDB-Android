@@ -2,16 +2,15 @@ package com.dpfht.testtmdb.activity
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.dpfht.testtmdb.R
+import com.dpfht.testtmdb.TheApplication
 import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.di.moviereviewactivity.DaggerMovieReviewActivityComponent
+import com.dpfht.testtmdb.di.moviereviewactivity.MovieReviewActivityModule
 import kotlinx.android.synthetic.main.activity_movie_review.*
+import javax.inject.Inject
 
 class MovieReviewActivity : BaseActivity() {
 
@@ -20,22 +19,27 @@ class MovieReviewActivity : BaseActivity() {
         const val KEY_EXTRA_MOVIE_TITLE = "keyExtraMovieTitle"
     }
 
+    @Inject
     lateinit var viewModel: MovieReviewViewModel
+
+    @Inject
     lateinit var adapter: ReviewAdapter
+
+    @Inject
+    lateinit var binding: ActivityMovieReviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieReviewViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = ReviewAdapter(viewModel)
+        val movieReviewActivityComponent = DaggerMovieReviewActivityComponent
+            .builder()
+            .movieReviewActivityModule(MovieReviewActivityModule(this))
+            .applicationComponent(TheApplication.get(this).applicationComponent)
+            .build()
 
-        val binding = DataBindingUtil.setContentView<ActivityMovieReviewBinding>(this, R.layout.activity_movie_review)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        movieReviewActivityComponent.inject(this)
 
         rvReview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {

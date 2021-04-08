@@ -13,9 +13,9 @@ import retrofit2.Response
 
 class MovieReviewViewModel: BaseViewModel() {
 
-    var restApi: RestService? = null
+    lateinit var restApi: RestService
 
-    var reviews: ArrayList<Review> = ArrayList()
+    val reviews: ArrayList<Review> = ArrayList()
     val reviewData = MutableLiveData<Review>()
 
     var page = 1
@@ -27,7 +27,7 @@ class MovieReviewViewModel: BaseViewModel() {
         isShowDialogLoading.postValue(true)
         isLoadingData = true
 
-        val disposable = restApi?.getMovieReviews(movieId, Config.API_KEY, page)
+        val disposable = restApi.getMovieReviews(movieId, Config.API_KEY, page)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object : CallbackWrapper<Response<ReviewResponse?>, ReviewResponse?>(this) {

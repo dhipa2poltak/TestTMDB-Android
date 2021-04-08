@@ -3,31 +3,35 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.dpfht.testtmdb.R
+import com.dpfht.testtmdb.TheApplication
 import com.dpfht.testtmdb.adapter.GenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.di.genreactivity.DaggerGenreActivityComponent
+import com.dpfht.testtmdb.di.genreactivity.GenreActivityModule
+import javax.inject.Inject
 
 class GenreActivity : BaseActivity() {
 
+    @Inject
     lateinit var viewModel: GenreViewModel
+
+    @Inject
     lateinit var adapter: GenreAdapter
+
+    @Inject
+    lateinit var binding: ActivityGenreBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[GenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = GenreAdapter(viewModel)
+        val genreActivityComponent = DaggerGenreActivityComponent
+                .builder()
+            .genreActivityModule(GenreActivityModule(this))
+            .applicationComponent(TheApplication.get(this).applicationComponent)
+            .build()
 
-        val binding = DataBindingUtil.setContentView<ActivityGenreBinding>(this, R.layout.activity_genre)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        genreActivityComponent.inject(this)
 
         viewModel.genreData.observe(this, Observer {
             adapter.notifyDataSetChanged()

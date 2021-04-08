@@ -15,21 +15,22 @@ import java.util.ArrayList
 
 class MovieByGenreViewModel: BaseViewModel() {
 
-    var restApi: RestService? = null
-    var genreId = -1
+    lateinit var restApi: RestService
+
     val title = ObservableField<String>("")
-    var movies: ArrayList<Movie> = ArrayList()
+    val movies = ArrayList<Movie>()
     val movieData = MutableLiveData<Movie>()
-    var page = 1
-
     val movieDetailActivity = MutableLiveData<Pair<Class<*>, Movie?>>()
-
     val myCompositeDisposable = CompositeDisposable()
 
+    var genreId = -1
+    var page = 1
+
     fun doGetMoviesByGenre(genreId: String, page: Int) {
+        //toastMessage.value = "load data"
         isShowDialogLoading.postValue(true)
         isLoadingData = true
-        val disposable = restApi?.getMoviesByGenre(Config.API_KEY, genreId, page)
+        val disposable = restApi.getMoviesByGenre(Config.API_KEY, genreId, page)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object: CallbackWrapper<Response<DiscoverMovieByGenreResponse?>, DiscoverMovieByGenreResponse?>(this) {
@@ -40,7 +41,6 @@ class MovieByGenreViewModel: BaseViewModel() {
                             movies.add(movie)
                             movieData.value = movie
                         }
-                        //movieData.postValue(movies)
 
                         this@MovieByGenreViewModel.page = page
                     }

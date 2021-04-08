@@ -1,5 +1,6 @@
 package com.dpfht.testtmdb.rest
 
+/*
 import com.dpfht.testtmdb.Config
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
@@ -11,11 +12,9 @@ internal object RestClient {
     private var retrofit: Retrofit? = null
     val client: Retrofit?
         get() {
-            /*
-            val interceptor = HttpLoggingInterceptor()
-            interceptor.level = HttpLoggingInterceptor.Level.BODY
-            val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
-            */
+            //val interceptor = HttpLoggingInterceptor()
+            //interceptor.level = HttpLoggingInterceptor.Level.BODY
+            //val client = OkHttpClient.Builder().addInterceptor(interceptor).build()
 
             val certificatePinner = CertificatePinner.Builder()
                     .add("api.themoviedb.org", "sha256/+vqZVAzTqUP8BGkfl88yU7SQ3C8J2uNEa55B7RZjEg0=")
@@ -36,3 +35,4 @@ internal object RestClient {
             return retrofit
         }
 }
+*/

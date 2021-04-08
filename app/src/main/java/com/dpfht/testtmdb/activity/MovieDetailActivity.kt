@@ -3,13 +3,12 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.dpfht.testtmdb.R
+import com.dpfht.testtmdb.TheApplication
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.di.moviedetailactivity.DaggerMovieDetailActivityComponent
+import com.dpfht.testtmdb.di.moviedetailactivity.MovieDetailActivityModule
+import javax.inject.Inject
 
 class MovieDetailActivity : BaseActivity() {
 
@@ -17,20 +16,24 @@ class MovieDetailActivity : BaseActivity() {
         const val KEY_EXTRA_MOVIE_ID = "keyExtraMovieId"
     }
 
+    @Inject
     lateinit var viewModel: MovieDetailViewModel
+
+    @Inject
+    lateinit var binding: ActivityMovieDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieDetailViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
+        val movieDetailActivityComponent = DaggerMovieDetailActivityComponent
+            .builder()
+            .movieDetailActivityModule(MovieDetailActivityModule(this))
+            .applicationComponent(TheApplication.get(this).applicationComponent)
+            .build()
 
-        val binding = DataBindingUtil.setContentView<ActivityMovieDetailBinding>(this, R.layout.activity_movie_detail)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        movieDetailActivityComponent.inject(this)
 
         viewModel.isShowDialogLoading.observe(this, Observer { value ->
             if (value) {

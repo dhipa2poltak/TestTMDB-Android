@@ -8,8 +8,11 @@ import com.dpfht.testtmdb.BR
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.activity.GenreViewModel
 import com.dpfht.testtmdb.databinding.RowGenreBinding
+import javax.inject.Inject
 
-class GenreAdapter(private val viewModel: GenreViewModel): RecyclerView.Adapter<GenreAdapter.GenreHolder>() {
+class GenreAdapter @Inject constructor(): RecyclerView.Adapter<GenreAdapter.GenreHolder>() {
+
+    var viewModel: GenreViewModel? = null
 
     private lateinit var binding: RowGenreBinding
 
@@ -20,11 +23,13 @@ class GenreAdapter(private val viewModel: GenreViewModel): RecyclerView.Adapter<
     }
 
     override fun getItemCount(): Int {
-        return viewModel.genres.size
+        return viewModel?.genres?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: GenreHolder, position: Int) {
-        holder.bindData(viewModel, position)
+        if (viewModel != null) {
+            holder.bindData(viewModel!!, position)
+        }
     }
 
     inner class GenreHolder(private val binding: RowGenreBinding): RecyclerView.ViewHolder(binding.root) {

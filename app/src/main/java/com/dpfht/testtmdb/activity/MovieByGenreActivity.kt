@@ -3,17 +3,15 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_movie_by_genre.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MovieByGenreActivity : BaseActivity() {
 
     companion object {
@@ -21,19 +19,21 @@ class MovieByGenreActivity : BaseActivity() {
         const val KEY_EXTRA_GENRE_NAME = "keyExtraGenreName"
     }
 
-    lateinit var viewModel: MovieByGenreViewModel
+    private val viewModel: MovieByGenreViewModel by viewModels()
+
+    @Inject
     lateinit var adapter: MovieByGenreAdapter
+
+    @Inject
+    lateinit var binding: ActivityMovieByGenreBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieByGenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = MovieByGenreAdapter(viewModel)
+        adapter.viewModel = viewModel
 
-        val binding = DataBindingUtil.setContentView<ActivityMovieByGenreBinding>(this, R.layout.activity_movie_by_genre)
         binding.viewModel = viewModel
         binding.activity = this
         binding.executePendingBindings()
@@ -51,11 +51,11 @@ class MovieByGenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.movieData.observe(this, Observer {
+        viewModel.movieData.observe(this, {
             adapter.notifyItemInserted(viewModel.movies.size - 1)
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 if (viewModel.movies.isEmpty()) {
                     prgDialog.show()
@@ -65,7 +65,7 @@ class MovieByGenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.movieDetailActivity.observe(this, Observer { value ->
+        viewModel.movieDetailActivity.observe(this, { value ->
             //Toast.makeText(this@MovieByGenreActivity, "size: ${viewModel.movies.size}", Toast.LENGTH_SHORT).show()
             if (value != null) {
                 val itn = Intent(this, value.first)
@@ -77,7 +77,7 @@ class MovieByGenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieByGenreActivity, value, Toast.LENGTH_SHORT).show()
             }

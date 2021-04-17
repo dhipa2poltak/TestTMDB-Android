@@ -8,8 +8,11 @@ import com.dpfht.testtmdb.BR
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.activity.MovieReviewViewModel
 import com.dpfht.testtmdb.databinding.RowReviewBinding
+import javax.inject.Inject
 
-class ReviewAdapter(private val viewModel: MovieReviewViewModel): RecyclerView.Adapter<ReviewAdapter.ReviewHolder>() {
+class ReviewAdapter @Inject constructor(): RecyclerView.Adapter<ReviewAdapter.ReviewHolder>() {
+
+    var viewModel: MovieReviewViewModel? = null
 
     private lateinit var binding: RowReviewBinding
 
@@ -20,11 +23,13 @@ class ReviewAdapter(private val viewModel: MovieReviewViewModel): RecyclerView.A
     }
 
     override fun getItemCount(): Int {
-        return viewModel.reviews.size
+        return viewModel?.reviews?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: ReviewHolder, position: Int) {
-        holder.bindData(viewModel, position)
+        if (viewModel != null) {
+            holder.bindData(viewModel!!, position)
+        }
     }
 
     inner class ReviewHolder(private val binding: RowReviewBinding): RecyclerView.ViewHolder(binding.root) {

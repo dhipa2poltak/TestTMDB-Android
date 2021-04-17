@@ -3,36 +3,33 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.dpfht.testtmdb.R
+import androidx.activity.viewModels
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MovieDetailActivity : BaseActivity() {
 
     companion object {
         const val KEY_EXTRA_MOVIE_ID = "keyExtraMovieId"
     }
 
-    lateinit var viewModel: MovieDetailViewModel
+    private val viewModel: MovieDetailViewModel by viewModels()
+
+    @Inject
+    lateinit var binding: ActivityMovieDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieDetailViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-
-        val binding = DataBindingUtil.setContentView<ActivityMovieDetailBinding>(this, R.layout.activity_movie_detail)
         binding.viewModel = viewModel
         binding.activity = this
         binding.executePendingBindings()
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 prgDialog.show()
             } else {
@@ -40,7 +37,7 @@ class MovieDetailActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieDetailActivity, value, Toast.LENGTH_SHORT).show()
             }

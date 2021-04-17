@@ -5,14 +5,15 @@ import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.MovieDetailsResponse
 import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
+import dagger.hilt.android.lifecycle.HiltViewModel
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
+import javax.inject.Inject
 
-class MovieDetailViewModel: BaseViewModel() {
-
-    var restApi: RestService? = null
+@HiltViewModel
+class MovieDetailViewModel @Inject constructor(private val restService: RestService): BaseViewModel() {
 
     var id = -1
 
@@ -25,7 +26,7 @@ class MovieDetailViewModel: BaseViewModel() {
     fun doGetMovieDetail(movieId: Int) {
         isShowDialogLoading.postValue(true)
 
-        val disposable = restApi?.getMovieDetail(movieId, Config.API_KEY)
+        val disposable = restService.getMovieDetail(movieId, Config.API_KEY)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object : CallbackWrapper<Response<MovieDetailsResponse?>, MovieDetailsResponse?>(this) {

@@ -2,17 +2,15 @@ package com.dpfht.testtmdb.activity
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.RecyclerView
-import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.android.synthetic.main.activity_movie_review.*
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class MovieReviewActivity : BaseActivity() {
 
     companion object {
@@ -20,19 +18,21 @@ class MovieReviewActivity : BaseActivity() {
         const val KEY_EXTRA_MOVIE_TITLE = "keyExtraMovieTitle"
     }
 
-    lateinit var viewModel: MovieReviewViewModel
+    private val viewModel: MovieReviewViewModel by viewModels()
+
+    @Inject
     lateinit var adapter: ReviewAdapter
+
+    @Inject
+    lateinit var binding: ActivityMovieReviewBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieReviewViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = ReviewAdapter(viewModel)
+        adapter.viewModel = viewModel
 
-        val binding = DataBindingUtil.setContentView<ActivityMovieReviewBinding>(this, R.layout.activity_movie_review)
         binding.viewModel = viewModel
         binding.activity = this
         binding.executePendingBindings()
@@ -50,17 +50,17 @@ class MovieReviewActivity : BaseActivity() {
             }
         })
 
-        viewModel.reviewData.observe(this, Observer {
+        viewModel.reviewData.observe(this, {
             adapter.notifyItemInserted(viewModel.reviews.size - 1)
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieReviewActivity, value, Toast.LENGTH_SHORT).show()
             }
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 if (viewModel.reviews.isEmpty()) {
                     prgDialog.show()

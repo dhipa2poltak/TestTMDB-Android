@@ -8,9 +8,11 @@ import com.dpfht.testtmdb.BR
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.activity.MovieByGenreViewModel
 import com.dpfht.testtmdb.databinding.RowMovieBinding
+import javax.inject.Inject
 
-class MovieByGenreAdapter(private val viewModel: MovieByGenreViewModel): RecyclerView.Adapter<MovieByGenreAdapter.MovieByGenreHolder>() {
+class MovieByGenreAdapter @Inject constructor(): RecyclerView.Adapter<MovieByGenreAdapter.MovieByGenreHolder>() {
 
+    var viewModel: MovieByGenreViewModel? = null
     private lateinit var binding: RowMovieBinding
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieByGenreAdapter.MovieByGenreHolder {
@@ -20,11 +22,13 @@ class MovieByGenreAdapter(private val viewModel: MovieByGenreViewModel): Recycle
     }
 
     override fun getItemCount(): Int {
-        return viewModel.movies.size
+        return viewModel?.movies?.size ?: 0
     }
 
     override fun onBindViewHolder(holder: MovieByGenreAdapter.MovieByGenreHolder, position: Int) {
-        holder.bindData(viewModel, position)
+        if (viewModel != null) {
+            holder.bindData(viewModel!!, position)
+        }
     }
 
     inner class MovieByGenreHolder(private val binding: RowMovieBinding): RecyclerView.ViewHolder(binding.root) {

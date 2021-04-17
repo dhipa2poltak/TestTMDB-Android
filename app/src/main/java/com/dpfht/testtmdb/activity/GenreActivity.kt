@@ -3,37 +3,37 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.dpfht.testtmdb.R
+import androidx.activity.viewModels
 import com.dpfht.testtmdb.adapter.GenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class GenreActivity : BaseActivity() {
 
-    lateinit var viewModel: GenreViewModel
+    private val viewModel: GenreViewModel by viewModels()
+
+    @Inject
     lateinit var adapter: GenreAdapter
+
+    @Inject
+    lateinit var binding: ActivityGenreBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[GenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = GenreAdapter(viewModel)
+        adapter.viewModel = viewModel
 
-        val binding = DataBindingUtil.setContentView<ActivityGenreBinding>(this, R.layout.activity_genre)
         binding.viewModel = viewModel
         binding.activity = this
         binding.executePendingBindings()
 
-        viewModel.genreData.observe(this, Observer {
+        viewModel.genreData.observe(this, {
             adapter.notifyDataSetChanged()
         })
 
-        viewModel.movieByGenreActivity.observe(this, Observer { value ->
+        viewModel.movieByGenreActivity.observe(this, { value ->
             if (value != null) {
                 val itn = Intent(this, value.first)
                 if (value.second != null) {
@@ -45,7 +45,7 @@ class GenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 prgDialog.show()
             } else {
@@ -53,7 +53,7 @@ class GenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@GenreActivity, value, Toast.LENGTH_SHORT).show()
             }

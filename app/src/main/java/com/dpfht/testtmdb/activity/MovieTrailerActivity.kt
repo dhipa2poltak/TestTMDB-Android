@@ -8,6 +8,7 @@ import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import kotlinx.android.synthetic.main.activity_movie_trailer.*
+import org.koin.android.ext.android.inject
 import java.util.*
 
 class MovieTrailerActivity : YouTubeBaseActivity() {
@@ -16,7 +17,7 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
         const val KEY_EXTRA_MOVIE_ID = "keyExtraMovieId"
     }
 
-    private val viewModel = MovieTrailerViewModel()
+    private val viewModel: MovieTrailerViewModel by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +27,7 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
             val movieId = intent.getIntExtra(KEY_EXTRA_MOVIE_ID, -1)
 
             if (movieId != -1) {
-                viewModel.doGetMovieTrailers(movieId, {
+                viewModel.doGetMovieTrailers(movieId) {
                     playerYoutube.initialize(
                         PlayerConfig.API_KEY,
                         object : YouTubePlayer.OnInitializedListener {
@@ -39,7 +40,9 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
 
                                 var keyVideo = ""
                                 for (trailer in viewModel.trailers) {
-                                    if (trailer.site?.toLowerCase(Locale.ROOT)?.trim() == "youtube") {
+                                    if (trailer.site?.toLowerCase(Locale.ROOT)
+                                            ?.trim() == "youtube"
+                                    ) {
                                         keyVideo = trailer.key ?: ""
                                         break
                                     }
@@ -62,14 +65,20 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
                                 ).show()
                             }
                         })
-                }, {
+                }/*, {
                     Toast.makeText(
                         this@MovieTrailerActivity,
                         "failed to load movie trailer",
                         Toast.LENGTH_SHORT
                     ).show()
-                })
+                }*/
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+        viewModel.myCompositeDisposable.clear()
     }
 }

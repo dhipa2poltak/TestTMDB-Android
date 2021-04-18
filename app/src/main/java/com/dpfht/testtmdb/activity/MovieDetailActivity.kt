@@ -3,13 +3,11 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import org.koin.android.ext.android.get
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MovieDetailActivity : BaseActivity() {
 
@@ -17,20 +15,16 @@ class MovieDetailActivity : BaseActivity() {
         const val KEY_EXTRA_MOVIE_ID = "keyExtraMovieId"
     }
 
-    lateinit var viewModel: MovieDetailViewModel
+    private val viewModel: MovieDetailViewModel by viewModel()
+
+    lateinit var binding: ActivityMovieDetailBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieDetailViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-
-        val binding = DataBindingUtil.setContentView<ActivityMovieDetailBinding>(this, R.layout.activity_movie_detail)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        binding = get { parametersOf(this, viewModel) }
 
         viewModel.isShowDialogLoading.observe(this, Observer { value ->
             if (value) {

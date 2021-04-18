@@ -11,9 +11,9 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 
-class MovieReviewViewModel: BaseViewModel() {
+class MovieReviewViewModel(private val restService: RestService): BaseViewModel() {
 
-    var restApi: RestService? = null
+    //var restApi: RestService? = null
 
     var reviews: ArrayList<Review> = ArrayList()
     val reviewData = MutableLiveData<Review>()
@@ -27,7 +27,7 @@ class MovieReviewViewModel: BaseViewModel() {
         isShowDialogLoading.postValue(true)
         isLoadingData = true
 
-        val disposable = restApi?.getMovieReviews(movieId, Config.API_KEY, page)
+        val disposable = restService.getMovieReviews(movieId, Config.API_KEY, page)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object : CallbackWrapper<Response<ReviewResponse?>, ReviewResponse?>(this) {

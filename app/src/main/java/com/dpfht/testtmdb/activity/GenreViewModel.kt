@@ -12,9 +12,9 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.Response
 import kotlin.collections.ArrayList
 
-class GenreViewModel: BaseViewModel() {
+class GenreViewModel(private val restService: RestService): BaseViewModel() {
 
-    var restApi: RestService? = null
+    //var restApi: RestService? = null
     var genres: ArrayList<Genre> = ArrayList()
     val genreData = MutableLiveData<List<Genre>>()
     val movieByGenreActivity = MutableLiveData<Pair<Class<*>, Genre?>>()
@@ -23,7 +23,7 @@ class GenreViewModel: BaseViewModel() {
 
     fun doGetMovieGenre() {
         isShowDialogLoading.postValue(true)
-        val disposable = restApi?.getMovieGenre(Config.API_KEY)
+        val disposable = restService.getMovieGenre(Config.API_KEY)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeWith(object : CallbackWrapper<Response<GenreResponse?>, GenreResponse?>(this) {

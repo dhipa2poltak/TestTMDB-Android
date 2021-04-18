@@ -3,31 +3,25 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
-import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.GenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class GenreActivity : BaseActivity() {
 
-    lateinit var viewModel: GenreViewModel
-    lateinit var adapter: GenreAdapter
+    private val viewModel: GenreViewModel by viewModel()
+
+    val adapter: GenreAdapter by inject { parametersOf(viewModel) }
+    lateinit var binding: ActivityGenreBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = ViewModelProvider(this)[GenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = GenreAdapter(viewModel)
-
-        val binding = DataBindingUtil.setContentView<ActivityGenreBinding>(this, R.layout.activity_genre)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        binding = get { parametersOf(this, viewModel) }
 
         viewModel.genreData.observe(this, Observer {
             adapter.notifyDataSetChanged()

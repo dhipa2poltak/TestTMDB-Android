@@ -3,16 +3,15 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
-import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
 import kotlinx.android.synthetic.main.activity_movie_by_genre.*
+import org.koin.android.ext.android.get
+import org.koin.android.ext.android.inject
+import org.koin.android.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class MovieByGenreActivity : BaseActivity() {
 
@@ -21,22 +20,17 @@ class MovieByGenreActivity : BaseActivity() {
         const val KEY_EXTRA_GENRE_NAME = "keyExtraGenreName"
     }
 
-    lateinit var viewModel: MovieByGenreViewModel
-    lateinit var adapter: MovieByGenreAdapter
+    private val viewModel: MovieByGenreViewModel by viewModel()
+
+    val adapter: MovieByGenreAdapter by inject { parametersOf(viewModel) }
+    lateinit var binding: ActivityMovieByGenreBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
-        viewModel = ViewModelProvider(this)[MovieByGenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
-        adapter = MovieByGenreAdapter(viewModel)
-
-        val binding = DataBindingUtil.setContentView<ActivityMovieByGenreBinding>(this, R.layout.activity_movie_by_genre)
-        binding.viewModel = viewModel
-        binding.activity = this
-        binding.executePendingBindings()
+        binding = get { parametersOf(this, viewModel) }
 
         rvMovieByGenre.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -96,6 +90,8 @@ class MovieByGenreActivity : BaseActivity() {
                 viewModel.doGetMoviesByGenre(genreId.toString(), viewModel.page)
             }
         }
+
+        //Toast.makeText(this, "size: ${viewModel.movies.size}", Toast.LENGTH_SHORT).show()
     }
 
     override fun onDestroy() {

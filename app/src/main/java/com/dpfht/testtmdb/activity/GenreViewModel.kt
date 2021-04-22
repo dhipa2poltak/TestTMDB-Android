@@ -20,31 +20,29 @@ class GenreViewModel(private val restService: RestService): BaseViewModel() {
 
     fun doGetMovieGenre() {
         isShowDialogLoading.postValue(true)
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val genreResponse = restService.getMovieGenre(Config.API_KEY)
-                    val listGenre = genreResponse.genres ?: ArrayList()
-                    genres = ArrayList(listGenre)
-                    genreData.postValue(genres)
-                } catch (t: Throwable) {
-                    when (t) {
-                        is IOException -> {
-                            toastMessage.postValue("Network Error")
-                        }
-                        is HttpException -> {
-                            val code = t.code()
-                            val errorResponse = t.message()
-                            toastMessage.postValue("Error $code $errorResponse")
-                        }
-                        else -> {
-                            toastMessage.postValue("Unknown Error")
-                        }
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val genreResponse = withContext(Dispatchers.IO) { restService.getMovieGenre(Config.API_KEY) }
+                val listGenre = genreResponse.genres ?: ArrayList()
+                genres = ArrayList(listGenre)
+                genreData.postValue(genres)
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> {
+                        toastMessage.postValue("Network Error")
                     }
-                } finally {
-                    isShowDialogLoading.postValue(false)
-                    isLoadingData = false
+                    is HttpException -> {
+                        val code = t.code()
+                        val errorResponse = t.message()
+                        toastMessage.postValue("Error $code $errorResponse")
+                    }
+                    else -> {
+                        toastMessage.postValue("Unknown Error")
+                    }
                 }
+            } finally {
+                isShowDialogLoading.postValue(false)
+                isLoadingData = false
             }
         }
     }

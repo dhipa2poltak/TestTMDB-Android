@@ -27,39 +27,36 @@ class MovieByGenreViewModel(private val restService: RestService): BaseViewModel
         isShowDialogLoading.postValue(true)
         isLoadingData = true
 
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val response = restService.getMoviesByGenre(Config.API_KEY, genreId, page)
-                    if (response.results != null && response.results!!.isNotEmpty()) {
-                        launch(Dispatchers.Main) {
-                            for (movie in response.results!!) {
-                                movies.add(movie)
-                                movieData.value = movie
-                            }
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val response = withContext(Dispatchers.IO) { restService.getMoviesByGenre(Config.API_KEY, genreId, page) }
+                if (response.results != null && response.results!!.isNotEmpty()) {
+                    for (movie in response.results!!) {
+                        movies.add(movie)
+                        movieData.value = movie
+                    }
 
-                            this@MovieByGenreViewModel.page = page
-                        }
-                    }
-                } catch (t: Throwable) {
-                    when (t) {
-                        is IOException -> {
-                            toastMessage.postValue("Network Error")
-                        }
-                        is HttpException -> {
-                            val code = t.code()
-                            val errorResponse = t.message()
-                            toastMessage.postValue("Error $code $errorResponse")
-                        }
-                        else -> {
-                            toastMessage.postValue("Unknown Error")
-                        }
-                    }
-                } finally {
-                    isShowDialogLoading.postValue(false)
-                    isLoadingData = false
+                    this@MovieByGenreViewModel.page = page
                 }
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> {
+                        toastMessage.postValue("Network Error")
+                    }
+                    is HttpException -> {
+                        val code = t.code()
+                        val errorResponse = t.message()
+                        toastMessage.postValue("Error $code $errorResponse")
+                    }
+                    else -> {
+                        toastMessage.postValue("Unknown Error")
+                    }
+                }
+            } finally {
+                isShowDialogLoading.postValue(false)
+                isLoadingData = false
             }
+
         }
     }
 

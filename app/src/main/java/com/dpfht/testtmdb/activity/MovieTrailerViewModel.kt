@@ -17,34 +17,30 @@ class MovieTrailerViewModel(private val restService: RestService) {
     fun doGetMovieTrailers(movieId: Int, successCallback: () -> Unit/*, errorCallback: () -> Unit*/) {
         isLoadingData = true
 
-        myScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val response = restService.getMovieTrailers(movieId, Config.API_KEY)
-                    if (response.results != null) {
-                        launch(Dispatchers.Main) {
-                            trailers = response.results!!
-                            successCallback()
-                        }
-                    }
-                } catch (t: Throwable) {
-                    when (t) {
-                        is IOException -> {
-                            //toastMessage.postValue("Network Error")
-                        }
-                        is HttpException -> {
-                            //val code = t.code()
-                            //val errorResponse = t.message()
-                            //toastMessage.postValue("Error $code $errorResponse")
-                        }
-                        else -> {
-                            //toastMessage.postValue("Unknown Error")
-                        }
-                    }
-                } finally {
-                    //isShowDialogLoading.postValue(false)
-                    isLoadingData = false
+        myScope.launch(Dispatchers.Main) {
+            try {
+                val response = withContext(Dispatchers.IO) { restService.getMovieTrailers(movieId, Config.API_KEY) }
+                if (response.results != null) {
+                    trailers = response.results!!
+                    successCallback()
                 }
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> {
+                        //toastMessage.postValue("Network Error")
+                    }
+                    is HttpException -> {
+                        //val code = t.code()
+                        //val errorResponse = t.message()
+                        //toastMessage.postValue("Error $code $errorResponse")
+                    }
+                    else -> {
+                        //toastMessage.postValue("Unknown Error")
+                    }
+                }
+            } finally {
+                //isShowDialogLoading.postValue(false)
+                isLoadingData = false
             }
         }
     }

@@ -20,40 +20,39 @@ class MovieDetailViewModel(private val restService: RestService): BaseViewModel(
 
     fun doGetMovieDetail(movieId: Int) {
         isShowDialogLoading.postValue(true)
-        viewModelScope.launch {
-            withContext(Dispatchers.IO) {
-                try {
-                    val response = restService.getMovieDetail(movieId, Config.API_KEY)
-                    id = response.id
-                    title.set(response.title)
-                    overview.set(response.overview)
+        viewModelScope.launch(Dispatchers.Main) {
+            try {
+                val response = withContext(Dispatchers.IO) { restService.getMovieDetail(movieId, Config.API_KEY) }
+                id = response.id
+                title.set(response.title)
+                overview.set(response.overview)
 
-                    if (response.posterPath != null) {
-                        val imageUrl: String =
-                            Config.IMAGE_URL_BASE_PATH + response.posterPath
+                if (response.posterPath != null) {
+                    val imageUrl: String =
+                        Config.IMAGE_URL_BASE_PATH + response.posterPath
 
-                        posterPath.set("")
-                        posterPath.set(imageUrl)
-                    }
-                } catch (t: Throwable) {
-                    when (t) {
-                        is IOException -> {
-                            toastMessage.postValue("Network Error")
-                        }
-                        is HttpException -> {
-                            val code = t.code()
-                            val errorResponse = t.message()
-                            toastMessage.postValue("Error $code $errorResponse")
-                        }
-                        else -> {
-                            toastMessage.postValue("Unknown Error")
-                        }
-                    }
-                } finally {
-                    isShowDialogLoading.postValue(false)
-                    isLoadingData = false
+                    posterPath.set("")
+                    posterPath.set(imageUrl)
                 }
+            } catch (t: Throwable) {
+                when (t) {
+                    is IOException -> {
+                        toastMessage.postValue("Network Error")
+                    }
+                    is HttpException -> {
+                        val code = t.code()
+                        val errorResponse = t.message()
+                        toastMessage.postValue("Error $code $errorResponse")
+                    }
+                    else -> {
+                        toastMessage.postValue("Unknown Error")
+                    }
+                }
+            } finally {
+                isShowDialogLoading.postValue(false)
+                isLoadingData = false
             }
+
         }
     }
 }

@@ -1,19 +1,17 @@
 package com.dpfht.testtmdb.activity
 
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Review
-import com.dpfht.testtmdb.model.ReviewResponse
-import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
 
 class MovieReviewViewModel(private val restService: RestService): BaseViewModel() {
-
-    //var restApi: RestService? = null
 
     var reviews: ArrayList<Review> = ArrayList()
     val reviewData = MutableLiveData<Review>()
@@ -21,31 +19,43 @@ class MovieReviewViewModel(private val restService: RestService): BaseViewModel(
     var page = 1
     var movieId = -1
 
-    val myCompositeDisposable = CompositeDisposable()
-
     fun doGetMovieReviews(movieId: Int, page: Int) {
         isShowDialogLoading.postValue(true)
         isLoadingData = true
 
-        val disposable = restService.getMovieReviews(movieId, Config.API_KEY, page)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribeWith(object : CallbackWrapper<Response<ReviewResponse?>, ReviewResponse?>(this) {
-                override fun onSuccess(t: Response<ReviewResponse?>) {
-                    val reviewResponse = t.body()
-                    if (reviewResponse?.results != null && reviewResponse.results!!.isNotEmpty()) {
-                        for (review in reviewResponse.results!!) {
-                            reviews.add(review)
-                            reviewData.value = review
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = restService.getMovieReviews(movieId, Config.API_KEY, page)
+                    if (response.results != null && response.results!!.isNotEmpty()) {
+                        launch(Dispatchers.Main) {
+                            for (review in response.results!!) {
+                                reviews.add(review)
+                                reviewData.value = review
+                            }
+
+                            this@MovieReviewViewModel.page = page
                         }
-
-                        this@MovieReviewViewModel.page = page
                     }
+                } catch (t: Throwable) {
+                    when (t) {
+                        is IOException -> {
+                            toastMessage.postValue("Network Error")
+                        }
+                        is HttpException -> {
+                            val code = t.code()
+                            val errorResponse = t.message()
+                            toastMessage.postValue("Error $code $errorResponse")
+                        }
+                        else -> {
+                            toastMessage.postValue("Unknown Error")
+                        }
+                    }
+                } finally {
+                    isShowDialogLoading.postValue(false)
+                    isLoadingData = false
                 }
-            })
-
-        if (disposable != null) {
-            myCompositeDisposable.add(disposable)
+            }
         }
     }
 }

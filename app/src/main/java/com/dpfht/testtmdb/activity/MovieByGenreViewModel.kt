@@ -2,53 +2,64 @@ package com.dpfht.testtmdb.activity
 
 import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
-import com.dpfht.testtmdb.model.DiscoverMovieByGenreResponse
 import com.dpfht.testtmdb.model.Movie
-import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
 import java.util.ArrayList
 
 class MovieByGenreViewModel(private val restService: RestService): BaseViewModel() {
 
-    //var restApi: RestService? = null
     var genreId = -1
-    val title = ObservableField<String>("")
+    val title = ObservableField("")
     var movies: ArrayList<Movie> = ArrayList()
     val movieData = MutableLiveData<Movie>()
     var page = 1
 
     val movieDetailActivity = MutableLiveData<Pair<Class<*>, Movie?>>()
 
-    val myCompositeDisposable = CompositeDisposable()
-
     fun doGetMoviesByGenre(genreId: String, page: Int) {
         isShowDialogLoading.postValue(true)
         isLoadingData = true
-        val disposable = restService.getMoviesByGenre(Config.API_KEY, genreId, page)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribeWith(object: CallbackWrapper<Response<DiscoverMovieByGenreResponse?>, DiscoverMovieByGenreResponse?>(this) {
-                override fun onSuccess(t: Response<DiscoverMovieByGenreResponse?>) {
-                    val moviesByGenreResponse = t.body()
-                    if (moviesByGenreResponse?.results != null && moviesByGenreResponse.results!!.isNotEmpty()) {
-                        for (movie in moviesByGenreResponse.results!!) {
-                            movies.add(movie)
-                            movieData.value = movie
+
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = restService.getMoviesByGenre(Config.API_KEY, genreId, page)
+                    if (response.results != null && response.results!!.isNotEmpty()) {
+                        launch(Dispatchers.Main) {
+                            for (movie in response.results!!) {
+                                movies.add(movie)
+                                movieData.value = movie
+                            }
+
+                            this@MovieByGenreViewModel.page = page
                         }
-                        //movieData.postValue(movies)
-
-                        this@MovieByGenreViewModel.page = page
                     }
+                } catch (t: Throwable) {
+                    when (t) {
+                        is IOException -> {
+                            toastMessage.postValue("Network Error")
+                        }
+                        is HttpException -> {
+                            val code = t.code()
+                            val errorResponse = t.message()
+                            toastMessage.postValue("Error $code $errorResponse")
+                        }
+                        else -> {
+                            toastMessage.postValue("Unknown Error")
+                        }
+                    }
+                } finally {
+                    isShowDialogLoading.postValue(false)
+                    isLoadingData = false
                 }
-            })
-
-        if (disposable != null) {
-            myCompositeDisposable.add(disposable)
+            }
         }
     }
 

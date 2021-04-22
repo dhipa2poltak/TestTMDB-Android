@@ -1,8 +1,6 @@
 package com.dpfht.testtmdb.rest
 
 import com.dpfht.testtmdb.model.*
-import io.reactivex.Observable
-import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -10,29 +8,29 @@ import retrofit2.http.Query
 interface RestService {
 
     @GET("genre/movie/list")
-    fun getMovieGenre(@Query("api_key") apiKey: String):  Observable<Response<GenreResponse?>>?
+    suspend fun getMovieGenre(@Query("api_key") apiKey: String):  GenreResponse
 
     @GET("discover/movie")
-    fun getMoviesByGenre(
+    suspend fun getMoviesByGenre(
         @Query("api_key") apiKey: String,
         @Query("with_genres") genreId: String,
-        @Query("page") page: Int): Observable<Response<DiscoverMovieByGenreResponse?>>?
+        @Query("page") page: Int): DiscoverMovieByGenreResponse
 
     @GET("movie/{movie_id}")
-    fun getMovieDetail(
+    suspend fun getMovieDetail(
         @Path("movie_id") movieId: Int,
-        @Query("api_key") apiKey: String): Observable<Response<MovieDetailsResponse?>>?
+        @Query("api_key") apiKey: String): MovieDetailsResponse
 
     @GET("movie/{movie_id}/reviews")
-    fun getMovieReviews(
+    suspend fun getMovieReviews(
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String,
         @Query("page") page: Int,
-        @Query("language") language: String = "en-US"): Observable<Response<ReviewResponse?>>?
+        @Query("language") language: String = "en-US"): ReviewResponse
 
     @GET("movie/{movie_id}/videos")
-    fun getMovieTrailers(
+    suspend fun getMovieTrailers(
         @Path("movie_id") movieId: Int,
         @Query("api_key") apiKey: String,
-        @Query("language") language: String = "en-US"): Observable<Response<TrailerResponse?>>?
+        @Query("language") language: String = "en-US"): TrailerResponse
 }

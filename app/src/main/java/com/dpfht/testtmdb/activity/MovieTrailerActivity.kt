@@ -79,6 +79,6 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
     override fun onDestroy() {
         super.onDestroy()
 
-        viewModel.myCompositeDisposable.clear()
+        viewModel.myJob.cancel()
     }
 }

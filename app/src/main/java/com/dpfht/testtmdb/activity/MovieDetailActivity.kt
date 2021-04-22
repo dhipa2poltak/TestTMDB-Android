@@ -3,7 +3,6 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
 import org.koin.android.ext.android.get
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -26,7 +25,7 @@ class MovieDetailActivity : BaseActivity() {
 
         binding = get { parametersOf(this, viewModel) }
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 prgDialog.show()
             } else {
@@ -34,7 +33,7 @@ class MovieDetailActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieDetailActivity, value, Toast.LENGTH_SHORT).show()
             }
@@ -65,11 +64,5 @@ class MovieDetailActivity : BaseActivity() {
             itn.putExtra(MovieTrailerActivity.KEY_EXTRA_MOVIE_ID, viewModel.id)
             startActivity(itn)
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        viewModel.myCompositeDisposable.clear()
     }
 }

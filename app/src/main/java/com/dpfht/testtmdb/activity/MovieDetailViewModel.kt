@@ -1,18 +1,16 @@
 package com.dpfht.testtmdb.activity
 
 import androidx.databinding.ObservableField
+import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
-import com.dpfht.testtmdb.model.MovieDetailsResponse
-import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.disposables.CompositeDisposable
-import io.reactivex.schedulers.Schedulers
-import retrofit2.Response
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
+import java.io.IOException
 
 class MovieDetailViewModel(private val restService: RestService): BaseViewModel() {
-
-    //var restApi: RestService? = null
 
     var id = -1
 
@@ -20,35 +18,42 @@ class MovieDetailViewModel(private val restService: RestService): BaseViewModel(
     var overview = ObservableField<String>()
     var posterPath = ObservableField<String>()
 
-    val myCompositeDisposable = CompositeDisposable()
-
     fun doGetMovieDetail(movieId: Int) {
         isShowDialogLoading.postValue(true)
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                try {
+                    val response = restService.getMovieDetail(movieId, Config.API_KEY)
+                    id = response.id
+                    title.set(response.title)
+                    overview.set(response.overview)
 
-        val disposable = restService.getMovieDetail(movieId, Config.API_KEY)
-                ?.subscribeOn(Schedulers.io())
-                ?.observeOn(AndroidSchedulers.mainThread())
-            ?.subscribeWith(object : CallbackWrapper<Response<MovieDetailsResponse?>, MovieDetailsResponse?>(this) {
-                override fun onSuccess(t: Response<MovieDetailsResponse?>) {
-                    val movieDetailsResponse = t.body()
-                    if (movieDetailsResponse != null) {
-                        id = movieDetailsResponse.id
-                        title.set(movieDetailsResponse.title)
-                        overview.set(movieDetailsResponse.overview)
+                    if (response.posterPath != null) {
+                        val imageUrl: String =
+                            Config.IMAGE_URL_BASE_PATH + response.posterPath
 
-                        if (movieDetailsResponse.posterPath != null) {
-                            val imageUrl: String =
-                                Config.IMAGE_URL_BASE_PATH + movieDetailsResponse.posterPath
-
-                            posterPath.set("")
-                            posterPath.set(imageUrl)
+                        posterPath.set("")
+                        posterPath.set(imageUrl)
+                    }
+                } catch (t: Throwable) {
+                    when (t) {
+                        is IOException -> {
+                            toastMessage.postValue("Network Error")
+                        }
+                        is HttpException -> {
+                            val code = t.code()
+                            val errorResponse = t.message()
+                            toastMessage.postValue("Error $code $errorResponse")
+                        }
+                        else -> {
+                            toastMessage.postValue("Unknown Error")
                         }
                     }
+                } finally {
+                    isShowDialogLoading.postValue(false)
+                    isLoadingData = false
                 }
-            })
-
-        if (disposable != null) {
-            myCompositeDisposable.add(disposable)
+            }
         }
     }
 }

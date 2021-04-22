@@ -3,7 +3,6 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
@@ -45,11 +44,11 @@ class MovieByGenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.movieData.observe(this, Observer {
+        viewModel.movieData.observe(this, {
             adapter.notifyItemInserted(viewModel.movies.size - 1)
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 if (viewModel.movies.isEmpty()) {
                     prgDialog.show()
@@ -59,7 +58,7 @@ class MovieByGenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.movieDetailActivity.observe(this, Observer { value ->
+        viewModel.movieDetailActivity.observe(this, { value ->
             //Toast.makeText(this@MovieByGenreActivity, "size: ${viewModel.movies.size}", Toast.LENGTH_SHORT).show()
             if (value != null) {
                 val itn = Intent(this, value.first)
@@ -71,7 +70,7 @@ class MovieByGenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieByGenreActivity, value, Toast.LENGTH_SHORT).show()
             }
@@ -92,11 +91,5 @@ class MovieByGenreActivity : BaseActivity() {
         }
 
         //Toast.makeText(this, "size: ${viewModel.movies.size}", Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        viewModel.myCompositeDisposable.clear()
     }
 }

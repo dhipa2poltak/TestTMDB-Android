@@ -6,7 +6,6 @@ import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
 import org.koin.dsl.module
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 val appModule = module {
@@ -33,7 +32,7 @@ fun provideOkHttpClient(certificatePinner: CertificatePinner): OkHttpClient {
 fun provideRetrofit(client: OkHttpClient, baseUrl: String): Retrofit {
     return Retrofit.Builder()
         .baseUrl(baseUrl)
-        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        //.addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .addConverterFactory(GsonConverterFactory.create())
         .client(client)
         .build()

@@ -2,7 +2,6 @@ package com.dpfht.testtmdb.activity
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
@@ -44,17 +43,17 @@ class MovieReviewActivity : BaseActivity() {
             }
         })
 
-        viewModel.reviewData.observe(this, Observer {
+        viewModel.reviewData.observe(this, {
             adapter.notifyItemInserted(viewModel.reviews.size - 1)
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieReviewActivity, value, Toast.LENGTH_SHORT).show()
             }
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 if (viewModel.reviews.isEmpty()) {
                     prgDialog.show()
@@ -77,11 +76,5 @@ class MovieReviewActivity : BaseActivity() {
                 viewModel.doGetMovieReviews(movieId, viewModel.page)
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        viewModel.myCompositeDisposable.clear()
     }
 }

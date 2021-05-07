@@ -47,6 +47,7 @@ class MovieByGenreActivityModule(private val movieByGenreActivity: MovieByGenreA
         )
         binding.viewModel = viewModel
         binding.activity = movieByGenreActivity
+        binding.lifecycleOwner = movieByGenreActivity
         binding.executePendingBindings()
 
         return binding

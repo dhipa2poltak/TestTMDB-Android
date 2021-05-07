@@ -44,6 +44,7 @@ class MovieReviewActivityModule(private val movieReviewActivity: MovieReviewActi
         val binding = DataBindingUtil.setContentView<ActivityMovieReviewBinding>(movieReviewActivity, R.layout.activity_movie_review)
         binding.viewModel = viewModel
         binding.activity = movieReviewActivity
+        binding.lifecycleOwner = movieReviewActivity
         binding.executePendingBindings()
 
         return binding

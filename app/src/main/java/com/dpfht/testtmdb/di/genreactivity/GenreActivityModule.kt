@@ -47,6 +47,7 @@ class GenreActivityModule(private val genreActivity: GenreActivity) {
         )
         binding.viewModel = viewModel
         binding.activity = genreActivity
+        binding.lifecycleOwner = genreActivity
         binding.executePendingBindings()
 
         return binding

@@ -25,6 +25,7 @@ class MovieTrailerActivityModule(private val movieTrailerActivity: MovieTrailerA
     @MovieTrailerActivityScope
     fun provideActivityMovieTrailerBinding(): ActivityMovieTrailerBinding {
         val binding = DataBindingUtil.setContentView<ActivityMovieTrailerBinding>(movieTrailerActivity, R.layout.activity_movie_trailer)
+        //binding.lifecycleOwner = movieTrailerActivity
         binding.executePendingBindings()
 
         return binding

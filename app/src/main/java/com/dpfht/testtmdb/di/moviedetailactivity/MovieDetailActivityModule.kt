@@ -37,6 +37,7 @@ class MovieDetailActivityModule(private val movieDetailActivity: MovieDetailActi
         val binding = DataBindingUtil.setContentView<ActivityMovieDetailBinding>(movieDetailActivity, R.layout.activity_movie_detail)
         binding.viewModel = viewModel
         binding.activity = movieDetailActivity
+        binding.lifecycleOwner = movieDetailActivity
         binding.executePendingBindings()
 
         return binding

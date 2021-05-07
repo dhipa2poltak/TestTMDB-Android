@@ -1,6 +1,5 @@
 package com.dpfht.testtmdb.activity
 
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.DiscoverMovieByGenreResponse
@@ -17,7 +16,7 @@ class MovieByGenreViewModel: BaseViewModel() {
 
     lateinit var restApi: RestService
 
-    val title = ObservableField<String>("")
+    val title = MutableLiveData<String>()
     val movies = ArrayList<Movie>()
     val movieData = MutableLiveData<Movie>()
     val movieDetailActivity = MutableLiveData<Pair<Class<*>, Movie?>>()

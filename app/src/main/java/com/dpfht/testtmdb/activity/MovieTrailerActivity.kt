@@ -10,7 +10,6 @@ import com.dpfht.testtmdb.di.movietraileractivity.MovieTrailerActivityModule
 import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
-import kotlinx.android.synthetic.main.activity_movie_trailer.*
 import java.util.*
 import javax.inject.Inject
 
@@ -54,7 +53,7 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
 
                                 var keyVideo = ""
                                 for (trailer in viewModel.trailers) {
-                                    if (trailer.site?.toLowerCase(Locale.ROOT)
+                                    if (trailer.site?.lowercase(Locale.ROOT)
                                             ?.trim() == "youtube"
                                     ) {
                                         keyVideo = trailer.key ?: ""

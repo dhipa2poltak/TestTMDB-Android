@@ -3,7 +3,6 @@ package com.dpfht.testtmdb.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
-import androidx.lifecycle.Observer
 import com.dpfht.testtmdb.TheApplication
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
 import com.dpfht.testtmdb.di.moviedetailactivity.DaggerMovieDetailActivityComponent
@@ -35,7 +34,7 @@ class MovieDetailActivity : BaseActivity() {
 
         movieDetailActivityComponent.inject(this)
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 prgDialog.show()
             } else {
@@ -43,7 +42,7 @@ class MovieDetailActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieDetailActivity, value, Toast.LENGTH_SHORT).show()
             }
@@ -63,7 +62,7 @@ class MovieDetailActivity : BaseActivity() {
         if (viewModel.id != -1) {
             val itn = Intent(this@MovieDetailActivity, MovieReviewActivity::class.java)
             itn.putExtra(MovieReviewActivity.KEY_EXTRA_MOVIE_ID, viewModel.id)
-            itn.putExtra(MovieReviewActivity.KEY_EXTRA_MOVIE_TITLE, viewModel.title.get())
+            itn.putExtra(MovieReviewActivity.KEY_EXTRA_MOVIE_TITLE, viewModel.title.value)
             startActivity(itn)
         }
     }

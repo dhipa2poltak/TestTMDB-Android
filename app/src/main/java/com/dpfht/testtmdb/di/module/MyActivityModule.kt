@@ -1,5 +1,6 @@
 package com.dpfht.testtmdb.di.module
 
+import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.activity.*
@@ -27,6 +28,8 @@ val myActivityModule = module {
     factory { provideActivityMovieReviewBinding(it[0], it[1]) }
 
     factory { provideMovieTrailerViewModel(get()) }
+
+    factory { provideLoadingDialog(it[0]) }
 }
 
 fun provideGenreAdapter(viewModel: GenreViewModel): GenreAdapter {
@@ -37,6 +40,7 @@ fun provideActivityGenreBinding(activity: GenreActivity, viewModel: GenreViewMod
     val binding = DataBindingUtil.setContentView<ActivityGenreBinding>(activity, R.layout.activity_genre)
     binding.viewModel = viewModel
     binding.activity = activity
+    binding.lifecycleOwner = activity
     binding.executePendingBindings()
 
     return binding
@@ -50,6 +54,7 @@ fun provideActivityMovieByGenreBinding(activity: MovieByGenreActivity, viewModel
     val binding = DataBindingUtil.setContentView<ActivityMovieByGenreBinding>(activity, R.layout.activity_movie_by_genre)
     binding.viewModel = viewModel
     binding.activity = activity
+    binding.lifecycleOwner = activity
     binding.executePendingBindings()
 
     return binding
@@ -59,6 +64,7 @@ fun provideActivityMovieDetailBinding(activity: MovieDetailActivity, viewModel: 
     val binding = DataBindingUtil.setContentView<ActivityMovieDetailBinding>(activity, R.layout.activity_movie_detail)
     binding.viewModel = viewModel
     binding.activity = activity
+    binding.lifecycleOwner = activity
     binding.executePendingBindings()
 
     return binding
@@ -72,6 +78,7 @@ fun provideActivityMovieReviewBinding(activity: MovieReviewActivity, viewModel: 
     val binding = DataBindingUtil.setContentView<ActivityMovieReviewBinding>(activity, R.layout.activity_movie_review)
     binding.viewModel = viewModel
     binding.activity = activity
+    binding.lifecycleOwner = activity
     binding.executePendingBindings()
 
     return binding
@@ -79,4 +86,12 @@ fun provideActivityMovieReviewBinding(activity: MovieReviewActivity, viewModel: 
 
 fun provideMovieTrailerViewModel(restService: RestService): MovieTrailerViewModel {
     return MovieTrailerViewModel(restService)
+}
+
+fun provideLoadingDialog(activity: BaseActivity): AlertDialog {
+    return AlertDialog.Builder(activity)
+        .setCancelable(false)
+        .setView(R.layout.dialog_loading)
+
+        .create()
 }

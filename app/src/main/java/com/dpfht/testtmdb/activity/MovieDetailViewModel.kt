@@ -1,6 +1,6 @@
 package com.dpfht.testtmdb.activity
 
-import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.rest.RestService
@@ -14,9 +14,9 @@ class MovieDetailViewModel(private val restService: RestService): BaseViewModel(
 
     var id = -1
 
-    var title = ObservableField<String>()
-    var overview = ObservableField<String>()
-    var posterPath = ObservableField<String>()
+    var title = MutableLiveData<String>()
+    var overview = MutableLiveData<String>()
+    var posterPath = MutableLiveData<String>()
 
     fun doGetMovieDetail(movieId: Int) {
         isShowDialogLoading.postValue(true)
@@ -24,15 +24,15 @@ class MovieDetailViewModel(private val restService: RestService): BaseViewModel(
             try {
                 val response = withContext(Dispatchers.IO) { restService.getMovieDetail(movieId, Config.API_KEY) }
                 id = response.id
-                title.set(response.title)
-                overview.set(response.overview)
+                title.value = response.title
+                overview.value = response.overview
 
                 if (response.posterPath != null) {
                     val imageUrl: String =
                         Config.IMAGE_URL_BASE_PATH + response.posterPath
 
-                    posterPath.set("")
-                    posterPath.set(imageUrl)
+                    posterPath.value = ""
+                    posterPath.value = imageUrl
                 }
             } catch (t: Throwable) {
                 when (t) {

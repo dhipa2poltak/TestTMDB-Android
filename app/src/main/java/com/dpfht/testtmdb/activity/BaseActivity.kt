@@ -4,7 +4,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.dpfht.testtmdb.R
+import org.koin.android.ext.android.get
+import org.koin.core.parameter.parametersOf
 
 open class BaseActivity: AppCompatActivity() {
 
@@ -13,10 +14,7 @@ open class BaseActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val builder = AlertDialog.Builder(this@BaseActivity)
-        builder.setCancelable(false)
-        builder.setView(R.layout.dialog_loading)
-        prgDialog = builder.create()
+        prgDialog = get { parametersOf(this) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

@@ -1,6 +1,5 @@
 package com.dpfht.testtmdb.activity
 
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
@@ -16,7 +15,7 @@ import java.util.ArrayList
 class MovieByGenreViewModel(private val restService: RestService): BaseViewModel() {
 
     var genreId = -1
-    val title = ObservableField("")
+    val title = MutableLiveData<String>()
     var movies: ArrayList<Movie> = ArrayList()
     val movieData = MutableLiveData<Movie>()
     var page = 1

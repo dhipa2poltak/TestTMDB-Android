@@ -7,7 +7,7 @@ import com.dpfht.testtmdb.R
 import com.google.android.youtube.player.YouTubeBaseActivity
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
-import kotlinx.android.synthetic.main.activity_movie_trailer.*
+import com.google.android.youtube.player.YouTubePlayerView
 import org.koin.android.ext.android.inject
 import java.util.*
 
@@ -28,7 +28,7 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
 
             if (movieId != -1) {
                 viewModel.doGetMovieTrailers(movieId) {
-                    playerYoutube.initialize(
+                    (findViewById<YouTubePlayerView>(R.id.playerYoutube)).initialize(
                         PlayerConfig.API_KEY,
                         object : YouTubePlayer.OnInitializedListener {
 
@@ -40,7 +40,7 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
 
                                 var keyVideo = ""
                                 for (trailer in viewModel.trailers) {
-                                    if (trailer.site?.toLowerCase(Locale.ROOT)
+                                    if (trailer.site?.lowercase(Locale.ROOT)
                                             ?.trim() == "youtube"
                                     ) {
                                         keyVideo = trailer.key ?: ""

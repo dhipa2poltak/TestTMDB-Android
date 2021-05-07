@@ -6,7 +6,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
-import kotlinx.android.synthetic.main.activity_movie_by_genre.*
 import org.koin.android.ext.android.get
 import org.koin.android.ext.android.inject
 import org.koin.android.viewmodel.ext.android.viewModel
@@ -31,7 +30,7 @@ class MovieByGenreActivity : BaseActivity() {
 
         binding = get { parametersOf(this, viewModel) }
 
-        rvMovieByGenre.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.rvMovieByGenre.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val xx = recyclerView.computeVerticalScrollRange()
                 val xy = recyclerView.computeVerticalScrollOffset()
@@ -80,7 +79,7 @@ class MovieByGenreActivity : BaseActivity() {
             val genreName = intent.getStringExtra(KEY_EXTRA_GENRE_NAME)
             if (genreName != null) {
                 val str = "Genre $genreName Movies"
-                viewModel.title.set(str)
+                viewModel.title.value = str
             }
 
             val genreId = intent.getIntExtra(KEY_EXTRA_GENRE_ID, -1)

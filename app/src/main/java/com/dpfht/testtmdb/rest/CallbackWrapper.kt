@@ -12,7 +12,7 @@ abstract class CallbackWrapper<T: Response<r>?, r>(private val viewModel: BaseVi
         viewModel.isShowDialogLoading.postValue(false)
         viewModel.isLoadingData = false
 
-        if (t?.isSuccessful() == true) {
+        if (t?.isSuccessful == true) {
             onSuccess(t)
         } else {
             viewModel.toastMessage.postValue("failed to load data")

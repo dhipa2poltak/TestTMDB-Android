@@ -1,6 +1,5 @@
 package com.dpfht.testtmdb.activity
 
-import androidx.databinding.ObservableField
 import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.DiscoverMovieByGenreResponse
@@ -19,7 +18,7 @@ import javax.inject.Inject
 class MovieByGenreViewModel @Inject constructor(private val restService: RestService): BaseViewModel() {
 
     var genreId = -1
-    val title = ObservableField("")
+    val title = MutableLiveData<String>()
     var movies: ArrayList<Movie> = ArrayList()
     val movieData = MutableLiveData<Movie>()
     var page = 1

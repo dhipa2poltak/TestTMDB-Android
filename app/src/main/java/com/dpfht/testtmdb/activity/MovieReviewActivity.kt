@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.android.synthetic.main.activity_movie_review.*
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -37,7 +36,7 @@ class MovieReviewActivity : BaseActivity() {
         binding.activity = this
         binding.executePendingBindings()
 
-        rvReview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.rvReview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val xx = recyclerView.computeVerticalScrollRange()
                 val xy = recyclerView.computeVerticalScrollOffset()
@@ -74,7 +73,7 @@ class MovieReviewActivity : BaseActivity() {
 
             val movieTitle = intent.getStringExtra(KEY_EXTRA_MOVIE_TITLE)
             if (movieTitle != null) {
-                tvMovieName.text = movieTitle
+                binding.tvMovieName.text = movieTitle
             }
 
             val movieId = intent.getIntExtra(KEY_EXTRA_MOVIE_ID, -1)

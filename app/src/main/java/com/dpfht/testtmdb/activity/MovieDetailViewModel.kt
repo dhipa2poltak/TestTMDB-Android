@@ -1,6 +1,6 @@
 package com.dpfht.testtmdb.activity
 
-import androidx.databinding.ObservableField
+import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.MovieDetailsResponse
 import com.dpfht.testtmdb.rest.CallbackWrapper
@@ -17,9 +17,9 @@ class MovieDetailViewModel @Inject constructor(private val restService: RestServ
 
     var id = -1
 
-    var title = ObservableField<String>()
-    var overview = ObservableField<String>()
-    var posterPath = ObservableField<String>()
+    var title = MutableLiveData<String>()
+    var overview = MutableLiveData<String>()
+    var posterPath = MutableLiveData<String>()
 
     val myCompositeDisposable = CompositeDisposable()
 
@@ -34,15 +34,15 @@ class MovieDetailViewModel @Inject constructor(private val restService: RestServ
                     val movieDetailsResponse = t.body()
                     if (movieDetailsResponse != null) {
                         id = movieDetailsResponse.id
-                        title.set(movieDetailsResponse.title)
-                        overview.set(movieDetailsResponse.overview)
+                        title.value = movieDetailsResponse.title
+                        overview.value = movieDetailsResponse.overview
 
                         if (movieDetailsResponse.posterPath != null) {
                             val imageUrl: String =
                                 Config.IMAGE_URL_BASE_PATH + movieDetailsResponse.posterPath
 
-                            posterPath.set("")
-                            posterPath.set(imageUrl)
+                            posterPath.value = ""
+                            posterPath.value = imageUrl
                         }
                     }
                 }

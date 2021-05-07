@@ -57,7 +57,7 @@ class MovieDetailActivity : BaseActivity() {
         if (viewModel.id != -1) {
             val itn = Intent(this@MovieDetailActivity, MovieReviewActivity::class.java)
             itn.putExtra(MovieReviewActivity.KEY_EXTRA_MOVIE_ID, viewModel.id)
-            itn.putExtra(MovieReviewActivity.KEY_EXTRA_MOVIE_TITLE, viewModel.title.get())
+            itn.putExtra(MovieReviewActivity.KEY_EXTRA_MOVIE_TITLE, viewModel.title.value)
             startActivity(itn)
         }
     }

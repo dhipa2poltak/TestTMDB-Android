@@ -3,7 +3,6 @@ package com.dpfht.testtmdb.activity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.R
@@ -11,7 +10,6 @@ import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
 import com.dpfht.testtmdb.rest.RestClient
 import com.dpfht.testtmdb.rest.RestService
-import kotlinx.android.synthetic.main.activity_movie_review.*
 
 class MovieReviewActivity : BaseActivity() {
 
@@ -37,7 +35,7 @@ class MovieReviewActivity : BaseActivity() {
         binding.activity = this
         binding.executePendingBindings()
 
-        rvReview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        binding.rvReview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val xx = recyclerView.computeVerticalScrollRange()
                 val xy = recyclerView.computeVerticalScrollOffset()
@@ -50,17 +48,17 @@ class MovieReviewActivity : BaseActivity() {
             }
         })
 
-        viewModel.reviewData.observe(this, Observer {
+        viewModel.reviewData.observe(this, {
             adapter.notifyItemInserted(viewModel.reviews.size - 1)
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieReviewActivity, value, Toast.LENGTH_SHORT).show()
             }
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 if (viewModel.reviews.isEmpty()) {
                     prgDialog.show()
@@ -74,7 +72,7 @@ class MovieReviewActivity : BaseActivity() {
 
             val movieTitle = intent.getStringExtra(KEY_EXTRA_MOVIE_TITLE)
             if (movieTitle != null) {
-                tvMovieName.text = movieTitle
+                binding.tvMovieName.text = movieTitle
             }
 
             val movieId = intent.getIntExtra(KEY_EXTRA_MOVIE_ID, -1)

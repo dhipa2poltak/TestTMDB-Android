@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.GenreAdapter
@@ -29,11 +28,11 @@ class GenreActivity : BaseActivity() {
         binding.activity = this
         binding.executePendingBindings()
 
-        viewModel.genreData.observe(this, Observer {
+        viewModel.genreData.observe(this, {
             adapter.notifyDataSetChanged()
         })
 
-        viewModel.movieByGenreActivity.observe(this, Observer { value ->
+        viewModel.movieByGenreActivity.observe(this, { value ->
             if (value != null) {
                 val itn = Intent(this, value.first)
                 if (value.second != null) {
@@ -45,7 +44,7 @@ class GenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 prgDialog.show()
             } else {
@@ -53,7 +52,7 @@ class GenreActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@GenreActivity, value, Toast.LENGTH_SHORT).show()
             }

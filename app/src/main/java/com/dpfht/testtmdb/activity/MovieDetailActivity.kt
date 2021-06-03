@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
@@ -32,7 +31,7 @@ class MovieDetailActivity : BaseActivity() {
         binding.activity = this
         binding.executePendingBindings()
 
-        viewModel.isShowDialogLoading.observe(this, Observer { value ->
+        viewModel.isShowDialogLoading.observe(this, { value ->
             if (value) {
                 prgDialog.show()
             } else {
@@ -40,7 +39,7 @@ class MovieDetailActivity : BaseActivity() {
             }
         })
 
-        viewModel.toastMessage.observe(this, Observer { value ->
+        viewModel.toastMessage.observe(this, { value ->
             if (value != null && value.isNotEmpty()) {
                 Toast.makeText(this@MovieDetailActivity, value, Toast.LENGTH_SHORT).show()
             }
@@ -50,7 +49,7 @@ class MovieDetailActivity : BaseActivity() {
 
             val movieId = intent.getIntExtra(KEY_EXTRA_MOVIE_ID, -1)
 
-            if (movieId != -1) {
+            if (movieId != -1 && viewModel.id == -1) {
                 viewModel.doGetMovieDetail(movieId)
             }
         }

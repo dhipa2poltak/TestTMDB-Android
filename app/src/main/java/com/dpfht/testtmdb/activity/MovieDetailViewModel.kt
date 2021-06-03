@@ -2,7 +2,7 @@ package com.dpfht.testtmdb.activity
 
 import androidx.databinding.ObservableField
 import com.dpfht.testtmdb.Config
-import com.dpfht.testtmdb.model.MovieDetailsResponse
+import com.dpfht.testtmdb.model.response.MovieDetailsResponse
 import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
 import io.reactivex.android.schedulers.AndroidSchedulers

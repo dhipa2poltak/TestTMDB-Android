@@ -3,7 +3,7 @@ package com.dpfht.testtmdb.activity
 import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Review
-import com.dpfht.testtmdb.model.ReviewResponse
+import com.dpfht.testtmdb.model.response.ReviewResponse
 import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
 import io.reactivex.android.schedulers.AndroidSchedulers

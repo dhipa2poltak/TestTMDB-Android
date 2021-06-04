@@ -3,7 +3,7 @@ package com.dpfht.testtmdb.activity
 import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Genre
-import com.dpfht.testtmdb.model.GenreResponse
+import com.dpfht.testtmdb.model.response.GenreResponse
 import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService
 import dagger.hilt.android.lifecycle.HiltViewModel

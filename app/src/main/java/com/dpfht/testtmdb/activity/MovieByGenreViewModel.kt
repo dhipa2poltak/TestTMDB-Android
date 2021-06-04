@@ -2,7 +2,7 @@ package com.dpfht.testtmdb.activity
 
 import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
-import com.dpfht.testtmdb.model.DiscoverMovieByGenreResponse
+import com.dpfht.testtmdb.model.response.DiscoverMovieByGenreResponse
 import com.dpfht.testtmdb.model.Movie
 import com.dpfht.testtmdb.rest.CallbackWrapper
 import com.dpfht.testtmdb.rest.RestService

@@ -1,6 +1,10 @@
 package com.dpfht.testtmdb.rest
 
-import com.dpfht.testtmdb.model.*
+import com.dpfht.testtmdb.model.response.DiscoverMovieByGenreResponse
+import com.dpfht.testtmdb.model.response.GenreResponse
+import com.dpfht.testtmdb.model.response.MovieDetailsResponse
+import com.dpfht.testtmdb.model.response.ReviewResponse
+import com.dpfht.testtmdb.model.response.TrailerResponse
 import io.reactivex.Observable
 import retrofit2.Call
 import retrofit2.Response

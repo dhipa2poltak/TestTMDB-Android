@@ -43,7 +43,7 @@ class MovieDetailActivity : BaseActivity() {
 
             val movieId = intent.getIntExtra(KEY_EXTRA_MOVIE_ID, -1)
 
-            if (movieId != -1) {
+            if (movieId != -1 && viewModel.id == -1) {
                 viewModel.doGetMovieDetail(movieId)
             }
         }

@@ -1,6 +1,10 @@
 package com.dpfht.testtmdb.rest
 
-import com.dpfht.testtmdb.model.*
+import com.dpfht.testtmdb.model.response.DiscoverMovieByGenreResponse
+import com.dpfht.testtmdb.model.response.GenreResponse
+import com.dpfht.testtmdb.model.response.MovieDetailsResponse
+import com.dpfht.testtmdb.model.response.ReviewResponse
+import com.dpfht.testtmdb.model.response.TrailerResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -8,7 +12,7 @@ import retrofit2.http.Query
 interface RestService {
 
     @GET("genre/movie/list")
-    suspend fun getMovieGenre(@Query("api_key") apiKey: String):  GenreResponse
+    suspend fun getMovieGenre(@Query("api_key") apiKey: String): GenreResponse
 
     @GET("discover/movie")
     suspend fun getMoviesByGenre(

@@ -2,7 +2,7 @@ package com.dpfht.testtmdb.activity
 
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Trailer
-import com.dpfht.testtmdb.model.TrailerResponse
+import com.dpfht.testtmdb.model.response.TrailerResponse
 import com.dpfht.testtmdb.rest.RestService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable

@@ -4,6 +4,8 @@ import android.content.Context
 import com.dpfht.testtmdb.BuildConfig
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.TheApplication
+import com.dpfht.testtmdb.repository.AppRepository
+import com.dpfht.testtmdb.repository.AppRepositoryImpl
 import com.dpfht.testtmdb.rest.RestService
 import dagger.Module
 import dagger.Provides
@@ -74,5 +76,11 @@ class ApplicationModule(private val theApplication: TheApplication) {
         val httpLoggingInterceptor = HttpLoggingInterceptor()
         httpLoggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         return httpLoggingInterceptor
+    }
+
+    @Singleton
+    @Provides
+    fun provideAppRepository(restService: RestService): AppRepository {
+        return AppRepositoryImpl(restService)
     }
 }

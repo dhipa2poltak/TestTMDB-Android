@@ -9,7 +9,7 @@ import com.dpfht.testtmdb.activity.MovieDetailViewModel
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
 import com.dpfht.testtmdb.di.ActivityContext
 import com.dpfht.testtmdb.di.ActivityModule
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.repository.AppRepository
 import dagger.Module
 import dagger.Provides
 
@@ -25,9 +25,9 @@ class MovieDetailActivityModule(private val movieDetailActivity: MovieDetailActi
 
     @Provides
     @MovieDetailActivityScope
-    fun provideMovieDetailViewModel(restApi: RestService): MovieDetailViewModel {
+    fun provideMovieDetailViewModel(appRepository: AppRepository): MovieDetailViewModel {
         val viewModel = ViewModelProvider(movieDetailActivity)[MovieDetailViewModel::class.java]
-        viewModel.restApi = restApi
+        viewModel.appRepository = appRepository
         return viewModel
     }
 

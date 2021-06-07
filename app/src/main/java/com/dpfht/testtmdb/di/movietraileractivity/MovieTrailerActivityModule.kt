@@ -5,7 +5,7 @@ import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.activity.MovieTrailerActivity
 import com.dpfht.testtmdb.activity.MovieTrailerViewModel
 import com.dpfht.testtmdb.databinding.ActivityMovieTrailerBinding
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.repository.AppRepository
 import dagger.Module
 import dagger.Provides
 
@@ -14,9 +14,9 @@ class MovieTrailerActivityModule(private val movieTrailerActivity: MovieTrailerA
 
     @Provides
     @MovieTrailerActivityScope
-    fun provideMovieTrailerViewModel(restApi: RestService): MovieTrailerViewModel {
+    fun provideMovieTrailerViewModel(appRepository: AppRepository): MovieTrailerViewModel {
         val viewModel = MovieTrailerViewModel()
-        viewModel.restApi = restApi
+        viewModel.appRepository = appRepository
 
         return viewModel
     }

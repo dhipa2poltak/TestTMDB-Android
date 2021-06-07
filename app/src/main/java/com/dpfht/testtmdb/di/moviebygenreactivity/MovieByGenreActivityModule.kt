@@ -10,7 +10,7 @@ import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
 import com.dpfht.testtmdb.di.ActivityContext
 import com.dpfht.testtmdb.di.ActivityModule
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.repository.AppRepository
 import dagger.Module
 import dagger.Provides
 
@@ -26,9 +26,9 @@ class MovieByGenreActivityModule(private val movieByGenreActivity: MovieByGenreA
 
     @Provides
     @MovieByGenreActivityScope
-    fun provideMovieByGenreViewModel(restApi: RestService): MovieByGenreViewModel {
+    fun provideMovieByGenreViewModel(appRepository: AppRepository): MovieByGenreViewModel {
         val viewModel = ViewModelProvider(movieByGenreActivity)[MovieByGenreViewModel::class.java]
-        viewModel.restApi = restApi
+        viewModel.appRepository = appRepository
         return viewModel
     }
 

@@ -3,7 +3,7 @@ package com.dpfht.testtmdb.activity
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Trailer
 import com.dpfht.testtmdb.model.response.TrailerResponse
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.repository.AppRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -12,7 +12,7 @@ import retrofit2.Response
 
 class MovieTrailerViewModel {
 
-    lateinit var restApi: RestService
+    lateinit var appRepository: AppRepository
 
     var trailers: ArrayList<Trailer> = ArrayList()
 
@@ -26,7 +26,7 @@ class MovieTrailerViewModel {
         //isShowDialogLoading.postValue(true)
         isLoadingData = true
 
-        val disposable = restApi.getMovieTrailers(movieId, Config.API_KEY)
+        val disposable = appRepository.getMovieTrailers(movieId, Config.API_KEY)
             ?.subscribeOn(Schedulers.io())
             ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object : DisposableObserver<Response<TrailerResponse?>>() {

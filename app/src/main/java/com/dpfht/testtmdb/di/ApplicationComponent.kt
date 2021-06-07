@@ -1,5 +1,6 @@
 package com.dpfht.testtmdb.di
 
+import com.dpfht.testtmdb.repository.AppRepository
 import com.dpfht.testtmdb.rest.RestService
 import dagger.Component
 import javax.inject.Singleton
@@ -9,4 +10,5 @@ import javax.inject.Singleton
 interface ApplicationComponent {
 
     fun getRestApiService(): RestService
+    fun getAppRepository(): AppRepository
 }

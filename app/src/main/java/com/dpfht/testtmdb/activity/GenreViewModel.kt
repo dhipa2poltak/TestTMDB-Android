@@ -4,8 +4,8 @@ import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Genre
 import com.dpfht.testtmdb.model.response.GenreResponse
+import com.dpfht.testtmdb.repository.AppRepository
 import com.dpfht.testtmdb.rest.CallbackWrapper
-import com.dpfht.testtmdb.rest.RestService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.schedulers.Schedulers
@@ -14,7 +14,7 @@ import kotlin.collections.ArrayList
 
 class GenreViewModel: BaseViewModel() {
 
-    lateinit var restApi: RestService
+    lateinit var appRepository: AppRepository
 
     var genres: ArrayList<Genre> = ArrayList()
     val genreData = MutableLiveData<List<Genre>>()
@@ -24,7 +24,7 @@ class GenreViewModel: BaseViewModel() {
 
     fun doGetMovieGenre() {
         isShowDialogLoading.postValue(true)
-        val disposable = restApi.getMovieGenre(Config.API_KEY)
+        val disposable = appRepository.getMovieGenre(Config.API_KEY)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
                 ?.subscribeWith(object : CallbackWrapper<Response<GenreResponse?>, GenreResponse?>(this) {

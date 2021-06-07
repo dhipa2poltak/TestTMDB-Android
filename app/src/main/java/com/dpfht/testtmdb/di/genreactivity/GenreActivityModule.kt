@@ -10,7 +10,7 @@ import com.dpfht.testtmdb.adapter.GenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityGenreBinding
 import com.dpfht.testtmdb.di.ActivityContext
 import com.dpfht.testtmdb.di.ActivityModule
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.repository.AppRepository
 import dagger.Module
 import dagger.Provides
 
@@ -26,9 +26,9 @@ class GenreActivityModule(private val genreActivity: GenreActivity) {
 
     @Provides
     @GenreActivityScope
-    fun provideGenreViewModel(restApi: RestService): GenreViewModel {
+    fun provideGenreViewModel(appRepository: AppRepository): GenreViewModel {
         val viewModel = ViewModelProvider(genreActivity)[GenreViewModel::class.java]
-        viewModel.restApi = restApi
+        viewModel.appRepository = appRepository
         return viewModel
     }
 

@@ -10,7 +10,7 @@ import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
 import com.dpfht.testtmdb.di.ActivityContext
 import com.dpfht.testtmdb.di.ActivityModule
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.repository.AppRepository
 import dagger.Module
 import dagger.Provides
 
@@ -26,9 +26,9 @@ class MovieReviewActivityModule(private val movieReviewActivity: MovieReviewActi
 
     @Provides
     @MovieReviewActivityScope
-    fun provideMovieReviewViewModel(restApi: RestService): MovieReviewViewModel {
+    fun provideMovieReviewViewModel(appRepository: AppRepository): MovieReviewViewModel {
         val viewModel = ViewModelProvider(movieReviewActivity)[MovieReviewViewModel::class.java]
-        viewModel.restApi = restApi
+        viewModel.appRepository = appRepository
         return viewModel
     }
 

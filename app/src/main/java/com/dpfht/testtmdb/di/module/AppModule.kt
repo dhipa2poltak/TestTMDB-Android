@@ -2,6 +2,7 @@ package com.dpfht.testtmdb.di.module
 
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.repository.AppRepository
+import com.dpfht.testtmdb.repository.AppRepositoryImpl
 import com.dpfht.testtmdb.rest.RestService
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
@@ -45,5 +46,5 @@ fun provideRestService(retrofit: Retrofit): RestService {
 }
 
 fun provideAppRepository(restService: RestService): AppRepository {
-    return AppRepository(restService)
+    return AppRepositoryImpl(restService)
 }

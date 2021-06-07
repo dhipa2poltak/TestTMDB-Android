@@ -9,8 +9,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.MovieByGenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
 
 class MovieByGenreActivity : BaseActivity() {
 
@@ -28,7 +26,6 @@ class MovieByGenreActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         viewModel = ViewModelProvider(this)[MovieByGenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
         adapter = MovieByGenreAdapter(viewModel)
 
         val binding = DataBindingUtil.setContentView<ActivityMovieByGenreBinding>(this, R.layout.activity_movie_by_genre)

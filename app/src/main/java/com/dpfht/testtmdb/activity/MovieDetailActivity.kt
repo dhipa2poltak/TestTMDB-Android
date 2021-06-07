@@ -7,8 +7,6 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
 
 class MovieDetailActivity : BaseActivity() {
 
@@ -24,7 +22,6 @@ class MovieDetailActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         viewModel = ViewModelProvider(this)[MovieDetailViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
 
         val binding = DataBindingUtil.setContentView<ActivityMovieDetailBinding>(this, R.layout.activity_movie_detail)
         binding.viewModel = viewModel

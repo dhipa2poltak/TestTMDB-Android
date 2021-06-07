@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.ReviewAdapter
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
 
 class MovieReviewActivity : BaseActivity() {
 
@@ -27,7 +25,6 @@ class MovieReviewActivity : BaseActivity() {
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         viewModel = ViewModelProvider(this)[MovieReviewViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
         adapter = ReviewAdapter(viewModel)
 
         val binding = DataBindingUtil.setContentView<ActivityMovieReviewBinding>(this, R.layout.activity_movie_review)

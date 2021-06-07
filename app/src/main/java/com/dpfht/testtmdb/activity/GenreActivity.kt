@@ -8,8 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import com.dpfht.testtmdb.R
 import com.dpfht.testtmdb.adapter.GenreAdapter
 import com.dpfht.testtmdb.databinding.ActivityGenreBinding
-import com.dpfht.testtmdb.rest.RestClient
-import com.dpfht.testtmdb.rest.RestService
 
 class GenreActivity : BaseActivity() {
 
@@ -20,7 +18,6 @@ class GenreActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this)[GenreViewModel::class.java]
-        viewModel.restApi = RestClient.client?.create(RestService::class.java)
         adapter = GenreAdapter(viewModel)
 
         val binding = DataBindingUtil.setContentView<ActivityGenreBinding>(this, R.layout.activity_genre)

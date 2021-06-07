@@ -5,7 +5,9 @@ import androidx.lifecycle.MutableLiveData
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.response.DiscoverMovieByGenreResponse
 import com.dpfht.testtmdb.model.Movie
+import com.dpfht.testtmdb.repository.AppRepositoryImpl
 import com.dpfht.testtmdb.rest.CallbackWrapper
+import com.dpfht.testtmdb.rest.RestClient
 import com.dpfht.testtmdb.rest.RestService
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -15,7 +17,8 @@ import java.util.ArrayList
 
 class MovieByGenreViewModel: BaseViewModel() {
 
-    var restApi: RestService? = null
+    private val appRepository = AppRepositoryImpl(RestClient.client?.create(RestService::class.java))
+
     var genreId = -1
     val title = ObservableField("")
     var movies: ArrayList<Movie> = ArrayList()
@@ -29,7 +32,7 @@ class MovieByGenreViewModel: BaseViewModel() {
     fun doGetMoviesByGenre(genreId: String, page: Int) {
         isShowDialogLoading.postValue(true)
         isLoadingData = true
-        val disposable = restApi?.getMoviesByGenre(Config.API_KEY, genreId, page)
+        val disposable = appRepository.getMoviesByGenre(Config.API_KEY, genreId, page)
                 ?.subscribeOn(Schedulers.io())
                 ?.observeOn(AndroidSchedulers.mainThread())
             ?.subscribeWith(object: CallbackWrapper<Response<DiscoverMovieByGenreResponse?>, DiscoverMovieByGenreResponse?>(this) {
@@ -40,7 +43,6 @@ class MovieByGenreViewModel: BaseViewModel() {
                             movies.add(movie)
                             movieData.value = movie
                         }
-                        //movieData.postValue(movies)
 
                         this@MovieByGenreViewModel.page = page
                     }

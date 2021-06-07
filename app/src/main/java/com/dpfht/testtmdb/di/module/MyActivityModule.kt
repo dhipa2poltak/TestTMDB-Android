@@ -11,7 +11,6 @@ import com.dpfht.testtmdb.databinding.ActivityGenreBinding
 import com.dpfht.testtmdb.databinding.ActivityMovieByGenreBinding
 import com.dpfht.testtmdb.databinding.ActivityMovieDetailBinding
 import com.dpfht.testtmdb.databinding.ActivityMovieReviewBinding
-import com.dpfht.testtmdb.rest.RestService
 import org.koin.dsl.module
 
 val myActivityModule = module {
@@ -26,8 +25,6 @@ val myActivityModule = module {
 
     factory { provideReviewAdapter(it[0]) }
     factory { provideActivityMovieReviewBinding(it[0], it[1]) }
-
-    factory { provideMovieTrailerViewModel(get()) }
 
     factory { provideLoadingDialog(it[0]) }
 }
@@ -82,10 +79,6 @@ fun provideActivityMovieReviewBinding(activity: MovieReviewActivity, viewModel: 
     binding.executePendingBindings()
 
     return binding
-}
-
-fun provideMovieTrailerViewModel(restService: RestService): MovieTrailerViewModel {
-    return MovieTrailerViewModel(restService)
 }
 
 fun provideLoadingDialog(activity: BaseActivity): AlertDialog {

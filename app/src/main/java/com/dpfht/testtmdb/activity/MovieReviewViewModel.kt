@@ -4,14 +4,15 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Review
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.model.response.ReviewResponse
+import com.dpfht.testtmdb.net.ResultWrapper.GenericError
+import com.dpfht.testtmdb.net.ResultWrapper.NetworkError
+import com.dpfht.testtmdb.net.ResultWrapper.Success
+import com.dpfht.testtmdb.repository.AppRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import retrofit2.HttpException
-import java.io.IOException
 
-class MovieReviewViewModel(private val restService: RestService): BaseViewModel() {
+class MovieReviewViewModel(private val appRepository: AppRepository): BaseViewModel() {
 
     var reviews: ArrayList<Review> = ArrayList()
     val reviewData = MutableLiveData<Review>()
@@ -24,34 +25,26 @@ class MovieReviewViewModel(private val restService: RestService): BaseViewModel(
         isLoadingData = true
 
         viewModelScope.launch(Dispatchers.Main) {
-            try {
-                val response = withContext(Dispatchers.IO) { restService.getMovieReviews(movieId, Config.API_KEY, page) }
-                if (response.results != null && response.results!!.isNotEmpty()) {
-                    for (review in response.results!!) {
-                        reviews.add(review)
-                        reviewData.value = review
-                    }
-
-                    this@MovieReviewViewModel.page = page
-                }
-            } catch (t: Throwable) {
-                when (t) {
-                    is IOException -> {
-                        toastMessage.postValue("Network Error")
-                    }
-                    is HttpException -> {
-                        val code = t.code()
-                        val errorResponse = t.message()
-                        toastMessage.postValue("Error $code $errorResponse")
-                    }
-                    else -> {
-                        toastMessage.postValue("Unknown Error")
-                    }
-                }
-            } finally {
-                isShowDialogLoading.postValue(false)
-                isLoadingData = false
+            when (val response = appRepository.getMovieReviews(movieId, Config.API_KEY, page)) {
+                is NetworkError -> toastMessage.value = "network error"
+                is GenericError -> toastMessage.value =
+                    "error ${response.code} ${response.error?.statusMessage}"
+                is Success -> doSuccess(response.value, page)
             }
+
+            isShowDialogLoading.postValue(false)
+            isLoadingData = false
+        }
+    }
+
+    private fun doSuccess(response: ReviewResponse, page: Int) {
+        if (response.results != null && response.results!!.isNotEmpty()) {
+            for (review in response.results!!) {
+                reviews.add(review)
+                reviewData.value = review
+            }
+
+            this@MovieReviewViewModel.page = page
         }
     }
 }

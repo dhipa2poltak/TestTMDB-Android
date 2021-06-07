@@ -1,47 +1,39 @@
 package com.dpfht.testtmdb.activity
 
+import androidx.lifecycle.viewModelScope
 import com.dpfht.testtmdb.Config
 import com.dpfht.testtmdb.model.Trailer
-import com.dpfht.testtmdb.rest.RestService
+import com.dpfht.testtmdb.model.response.TrailerResponse
+import com.dpfht.testtmdb.net.ResultWrapper.GenericError
+import com.dpfht.testtmdb.net.ResultWrapper.NetworkError
+import com.dpfht.testtmdb.net.ResultWrapper.Success
+import com.dpfht.testtmdb.repository.AppRepository
 import kotlinx.coroutines.*
-import retrofit2.HttpException
-import java.io.IOException
 
-class MovieTrailerViewModel(private val restService: RestService) {
+class MovieTrailerViewModel(private val appRepository: AppRepository): BaseViewModel() {
 
     var trailers: ArrayList<Trailer> = ArrayList()
-    private var isLoadingData = false
-    val myJob = Job()
-    private val myScope = CoroutineScope(myJob)
 
-    fun doGetMovieTrailers(movieId: Int, successCallback: () -> Unit/*, errorCallback: () -> Unit*/) {
+    fun doGetMovieTrailers(movieId: Int, successCallback: () -> Unit) {
         isLoadingData = true
 
-        myScope.launch(Dispatchers.Main) {
-            try {
-                val response = withContext(Dispatchers.IO) { restService.getMovieTrailers(movieId, Config.API_KEY) }
-                if (response.results != null) {
-                    trailers = response.results!!
-                    successCallback()
-                }
-            } catch (t: Throwable) {
-                when (t) {
-                    is IOException -> {
-                        //toastMessage.postValue("Network Error")
-                    }
-                    is HttpException -> {
-                        //val code = t.code()
-                        //val errorResponse = t.message()
-                        //toastMessage.postValue("Error $code $errorResponse")
-                    }
-                    else -> {
-                        //toastMessage.postValue("Unknown Error")
-                    }
-                }
-            } finally {
-                //isShowDialogLoading.postValue(false)
-                isLoadingData = false
+        viewModelScope.launch(Dispatchers.Main) {
+            when (val response = appRepository.getMovieTrailers(movieId, Config.API_KEY)) {
+                is NetworkError -> toastMessage.value = "network error"
+                is GenericError -> toastMessage.value =
+                    "error ${response.code} ${response.error?.statusMessage}"
+                is Success -> doSuccess(response.value, successCallback)
             }
+
+            isShowDialogLoading.postValue(false)
+            isLoadingData = false
+        }
+    }
+
+    private fun doSuccess(response: TrailerResponse, successCallback: () -> Unit) {
+        if (response.results != null) {
+            trailers = response.results!!
+            successCallback()
         }
     }
 }

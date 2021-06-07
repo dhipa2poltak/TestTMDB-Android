@@ -20,4 +20,8 @@ val viewModelModule = module {
     viewModel {
         MovieReviewViewModel(get())
     }
+
+    viewModel {
+        MovieTrailerViewModel(get())
+    }
 }

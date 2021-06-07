@@ -1,6 +1,7 @@
 package com.dpfht.testtmdb.di.module
 
 import com.dpfht.testtmdb.Config
+import com.dpfht.testtmdb.repository.AppRepository
 import com.dpfht.testtmdb.rest.RestService
 import okhttp3.CertificatePinner
 import okhttp3.OkHttpClient
@@ -13,6 +14,7 @@ val appModule = module {
     single { provideOkHttpClient(get()) }
     single { provideRetrofit(get(), Config.API_BASE_URL) }
     single { provideRestService(get()) }
+    single { provideAppRepository(get()) }
 }
 
 fun provideCertificatePinner(): CertificatePinner {
@@ -40,4 +42,8 @@ fun provideRetrofit(client: OkHttpClient, baseUrl: String): Retrofit {
 
 fun provideRestService(retrofit: Retrofit): RestService {
     return retrofit.create(RestService::class.java)
+}
+
+fun provideAppRepository(restService: RestService): AppRepository {
+    return AppRepository(restService)
 }

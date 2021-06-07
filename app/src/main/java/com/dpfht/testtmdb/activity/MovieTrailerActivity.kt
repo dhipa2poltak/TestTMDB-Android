@@ -65,20 +65,8 @@ class MovieTrailerActivity : YouTubeBaseActivity() {
                                 ).show()
                             }
                         })
-                }/*, {
-                    Toast.makeText(
-                        this@MovieTrailerActivity,
-                        "failed to load movie trailer",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }*/
+                }
             }
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        viewModel.myJob.cancel()
     }
 }

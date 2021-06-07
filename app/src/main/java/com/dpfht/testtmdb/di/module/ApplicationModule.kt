@@ -4,6 +4,8 @@ package com.dpfht.testtmdb.di.module
 
 import com.dpfht.testtmdb.BuildConfig
 import com.dpfht.testtmdb.Config
+import com.dpfht.testtmdb.repository.AppRepository
+import com.dpfht.testtmdb.repository.AppRepositoryImpl
 import com.dpfht.testtmdb.rest.RestService
 import dagger.Module
 import dagger.Provides
@@ -64,5 +66,11 @@ class ApplicationModule {
     @Singleton
     fun provideApiService(retrofit: Retrofit): RestService {
         return retrofit.create(RestService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAppRepository(restService: RestService): AppRepository {
+        return AppRepositoryImpl(restService)
     }
 }
